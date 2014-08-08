@@ -87,7 +87,8 @@
     {
       "type": "shell",
       "inline": [
-        "rm -rf /tmp/*"
+        "rm -rf /tmp/*",
+        "exit 0"
       ]
     }
   ],
