@@ -76,8 +76,7 @@
         "./scripts/vagrant-ssh.bat",
         "./scripts/dis-updates.bat",
         "./scripts/enable-rdp.bat",
-        "./scripts/compile-dotnet-assemblies.bat",
-        "./scripts/compact.bat"
+        "./scripts/compile-dotnet-assemblies.bat"
       ]
     },
     {
