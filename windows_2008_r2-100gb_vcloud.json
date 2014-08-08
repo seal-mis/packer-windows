@@ -81,8 +81,7 @@
         "./scripts/enable-winrm.bat",
         "./scripts/vagrant-ssh.bat",
         "./scripts/dis-updates.bat",
-        "./scripts/enable-rdp.bat",
-        "./scripts/compact.bat"
+        "./scripts/enable-rdp.bat"
       ]
     },
     {
