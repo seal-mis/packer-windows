@@ -1,6 +1,5 @@
 rem 
-rem bin\test-box-vcloud.bat ubuntu1204_vcloud.box ubuntu1204 vcloud vcloud
-
+rem bin\test-box-vcloud.bat ubuntu1204_vcloud.box ubuntu1204
 set quick=0
 
 if "%1x"=="--quickx" (
@@ -28,11 +27,6 @@ if exist C:\vagrant\resources\Vagrantfile-global (
 
 rem tested only with box-provider=vcloud
 vagrant plugin install vagrant-%box_provider%
-
-echo Patch vagrant-vcloud 0.4.0 base.rb
-if exist bin\base.rb copy /Y bin\base.rb %USERPROFILE%\.vagrant.d\gems\gems\vagrant-vcloud-0.4.0\lib\vagrant-vcloud\driver\base.rb
-echo Patch vagrant-vcloud 0.4.0 action.rb
-if exist bin\action.rb copy /Y bin\action.rb %USERPROFILE%\.vagrant.d\gems\gems\vagrant-vcloud-0.4.0\lib\vagrant-vcloud\action.rb
 
 vagrant plugin install vagrant-serverspec
 
