@@ -11,6 +11,7 @@
       "iso_checksum": "a491f985dccfb5863f31b728dddbedb2ff4df8d1",
       "headless": true,
       "boot_wait": "2m",
+      "skip_compaction": true,
       "ssh_username": "vagrant",
       "ssh_password": "vagrant",
       "ssh_wait_timeout": "4h",

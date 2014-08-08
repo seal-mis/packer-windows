@@ -8,6 +8,7 @@
       "iso_url": "http://roecloudsrv001.sealsystems.local/windows/win2008r2sp1_datacenter_en/SW_DVD5_Windows_Svr_DC_EE_SE_Web_2008_R2_64Bit_English_w_SP1_MLF_X17-22580.ISO",
       "headless": true,
       "boot_wait": "2m",
+      "skip_compaction": true,
       "ssh_username": "vagrant",
       "ssh_password": "vagrant",
       "ssh_wait_timeout": "2h",
