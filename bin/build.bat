@@ -32,6 +32,13 @@ echo spec = %spec%
 if exist output-%builder% (
   rmdir /S /Q output-%builder%
 )
+if exist "C:\Windows\system32\config\systemprofile\VirtualBox VMs\packer-%builder%" (
+  rmdir /S /Q "C:\Windows\system32\config\systemprofile\VirtualBox VMs\packer-%builder%"
+)
+if exist "C:\Windows\system32\config\systemprofile\VirtualBox VMs\%template%" (
+  rmdir /S /Q "C:\Windows\system32\config\systemprofile\VirtualBox VMs\%template%"
+)
+
 packer build --only=%builder% %template%_%spec%.json
 if ERRORLEVEL 1 goto :EOF
 
