@@ -30,7 +30,7 @@ vagrant plugin install vagrant-%box_provider%
 
 vagrant plugin install vagrant-serverspec
 
-vagrant box remove %box_name% --provider=%box_provider%
+vagrant box remove %box_name% --provider=%vagrant_provider%
 vagrant box add %box_name% %box_path%
 if ERRORLEVEL 1 set result=%ERRORLEVEL%
 if ERRORLEVEL 1 goto :done
@@ -87,7 +87,7 @@ popd
 if %quick%==1 goto :done
 
 set VAGRANT_LOG=warn
-vagrant box remove %box_name% --provider=%box_provider%
+vagrant box remove %box_name% --provider=%vagrant_provider%
 if ERRORLEVEL 1 set result=%ERRORLEVEL%
 
 goto :done
@@ -112,7 +112,7 @@ echo     tst.vm.provider :vcloud do ^|vcloud^| >>Vagrantfile
 echo       vcloud.vapp_prefix = "%box_name%" >>Vagrantfile
 echo     end >>Vagrantfile
 echo     tst.vm.provision :serverspec do ^|spec^| >>Vagrantfile
-echo       spec.pattern = '../test/*_spec.rb' >>Vagrantfile
+echo       spec.pattern = '../test/*_%box_provider%.rb' >>Vagrantfile
 echo     end >>Vagrantfile
 echo   end >>Vagrantfile
 echo end >>Vagrantfile

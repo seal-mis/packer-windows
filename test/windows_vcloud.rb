@@ -1,6 +1,12 @@
 require_relative 'spec_helper'
 
 describe 'box' do
+  describe 'windows box' do
+    it 'should have a vagrant user' do
+      expect(user 'vagrant').to exist
+    end
+  end
+
   # this tests if rsync works from bin/test-box-vcloud.bat
   describe file('c:/vagrant/testdir/testfile.txt') do
     it { should be_file }
@@ -24,7 +30,6 @@ describe 'box' do
     it { should be_running  }
     it { should have_start_mode("Automatic")  }
   end
-
 
   # check WinRM
   describe port(5985) do
@@ -50,4 +55,15 @@ describe 'box' do
   describe command('& "ipconfig" /all') do
       it { should return_stdout(/Description(\.| )*: vmxnet3/)  }
   end
+
+  # no Windows updates
+  describe service('Windows Update') do
+    it { should be_disabled  }
+  end
+
+  # check time zone
+  describe command('& tzutil /g') do
+      it { should return_stdout(/W. Europe Standard Time/)  }
+  end
+
 end
