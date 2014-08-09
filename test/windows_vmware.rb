@@ -51,9 +51,9 @@ describe 'box' do
     it { should have_value('0')  }
   end
 
-  # no Windows updates
-  describe service('Windows Update') do
-    it { should be_disabled  }
+  # no Windows updates service
+  describe command('& sc query "wuauserv"') do
+      it { should return_stdout(/STATE.*STOPPED/)  }
   end
 
   # check time zone
