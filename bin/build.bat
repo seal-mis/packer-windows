@@ -1,4 +1,4 @@
-set local
+setlocal
 set BUILD=%1
 set "var1=%BUILD:*_=%"
 echo var1 = %var1%
