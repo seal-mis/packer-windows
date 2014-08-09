@@ -1,8 +1,13 @@
-@set BUILD=%1
+set BUILD=%1
+
 if "%BUILD%x"=="uploadx" (
   shift
-  @set BUILD=%1
+  set BUILD=%1
 )
+
+echo %BUILD%
+echo %1
+echo %*
 
 @if "%BUILD:~-7%" == "_vcloud" (
   set boxname=%BUILD:~0,-7%
@@ -11,6 +16,7 @@ if "%BUILD%x"=="uploadx" (
 
 @if "%boxname%x"=="x" (
   echo Wrong build parameter!
+  set result=1
   goto :EOF
 )
 
