@@ -1,29 +1,26 @@
-setlocal
-set BUILD=%1
-set "var1=%BUILD:*_=%"
-echo var1 = %var1%
+@setlocal
+@set BUILD=%1
 
-set BUILD=%1
-if "%BUILD:~-7%" == "_vmware" (
+@if "%BUILD:~-7%" == "_vmware" (
   set boxname=%BUILD:~0,-7%
   set template=%BUILD:~0,-7%
   set builder=vmware-iso
   set spec=vmware
 )
-if "%BUILD:~-7%" == "_vcloud" (
+@if "%BUILD:~-7%" == "_vcloud" (
   set boxname=%BUILD:~0,-7%
   set template=%BUILD%
   set builder=vmware-iso
   set spec=vcloud
 )
-if "%BUILD:~-11%" == "_virtualbox" (
+@if "%BUILD:~-11%" == "_virtualbox" (
   set boxname=%BUILD:~0,-11%
   set template=%BUILD:~0,-11%
   set builder=virtualbox-iso
   set spec=virtualbox
 )
 
-if "%spec%x"=="x" (
+@if "%spec%x"=="x" (
   echo Wrong build parameter!
   goto :EOF
 )
