@@ -28,9 +28,12 @@ if "%spec%x"=="x" (
   goto :EOF
 )
 
-echo template = %template%
-echo builder = %builder%
-echo spec = %spec%
+@echo .
+@echo boxname = %boxname%
+@echo template = %template%
+@echo builder = %builder%
+@echo spec = %spec%
+@echo.
 
 if exist output-%builder% (
   rmdir /S /Q output-%builder%
