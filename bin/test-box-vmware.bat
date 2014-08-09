@@ -9,7 +9,8 @@ if "%1x"=="--quickx" (
 set box_path=%1
 set box_name=%2
 set box_provider=vmware
-set vagrant_provider=vmware-workstation
+set vagrant_provider=vmware_workstation
+set vagrant_plugin=vagrant-vmware-workstation
 
 set result=0
 if "%VAGRANT_HOME%x"=="x" set VAGRANT_HOME=%USERPROFILE%\.vagrant.d
@@ -20,10 +21,10 @@ if exist %tmp_path% rmdir /s /q %tmp_path%
 if %quick%==1 goto :do_test
 
 vagrant plugin install vagrant-serverspec
-vagrant plugin install vagrant-%vagrant_provider%
+vagrant plugin install %vagrant_plugin%
 if exist c:\vagrant\resources\license.lic (
-  if not exist %VAGRANT_HOME%\license-vagrant-vmware-workstation.lic (
-    vagrant plugin license vagrant-%vagrant_provider% c:\vagrant\resources\license.lic
+  if not exist %VAGRANT_HOME%\license-%vagrant_plugin%.lic (
+    vagrant plugin license %vagrant_plugin% c:\vagrant\resources\license.lic
   )
 )
 vagrant box remove %box_name% --provider=%vagrant_provider%
@@ -53,7 +54,7 @@ popd
 
 if %quick%==1 goto :done
 
-vagrant box remove %box_name% --provider=%vagrant_provider%
+vagrant box remove %box_name% --provider=vmware_desktop
 if ERRORLEVEL 1 set result=%ERRORLEVEL%
 
 goto :done
