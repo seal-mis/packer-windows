@@ -6,7 +6,7 @@ echo var1 = %var1%
 set BUILD=%1
 if "%BUILD:~-7%" == "_vmware" (
   set boxname=%BUILD:~0,-7%
-  set template=%boxname%
+  set template=%BUILD:~0,-7%
   set builder=vmware-iso
   set spec=vmware
 )
@@ -18,7 +18,7 @@ if "%BUILD:~-7%" == "_vcloud" (
 )
 if "%BUILD:~-11%" == "_virtualbox" (
   set boxname=%BUILD:~0,-11%
-  set template=%boxname%
+  set template=%BUILD:~0,-11%
   set builder=virtualbox-iso
   set spec=virtualbox
 )
@@ -28,7 +28,7 @@ if "%spec%x"=="x" (
   goto :EOF
 )
 
-@echo .
+@echo.
 @echo boxname = %boxname%
 @echo template = %template%
 @echo builder = %builder%
