@@ -9,7 +9,7 @@ if "%BUILD%x"=="uploadx" (
   set template=%BUILD%
 )
 
-@if "%spec%x"=="x" (
+@if "%boxname%x"=="x" (
   echo Wrong build parameter!
   goto :EOF
 )
