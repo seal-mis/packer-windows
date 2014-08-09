@@ -5,17 +5,20 @@ echo var1 = %var1%
 
 set BUILD=%1
 if "%BUILD:~-7%" == "_vmware" (
-  set template=%BUILD:~0,-7%
+  set boxname=%BUILD:~0,-7%
+  set template=%boxname%
   set builder=vmware-iso
   set spec=vmware
 )
 if "%BUILD:~-7%" == "_vcloud" (
-  set template=%BUILD:~0,-7%
+  set boxname=%BUILD:~0,-7%
+  set template=%BUILD%
   set builder=vmware-iso
   set spec=vcloud
 )
 if "%BUILD:~-11%" == "_virtualbox" (
-  set template=%BUILD:~0,-11%
+  set boxname=%BUILD:~0,-11%
+  set template=%boxname%
   set builder=virtualbox-iso
   set spec=virtualbox
 )
@@ -39,9 +42,9 @@ if exist "C:\Windows\system32\config\systemprofile\VirtualBox VMs\%template%" (
   rmdir /S /Q "C:\Windows\system32\config\systemprofile\VirtualBox VMs\%template%"
 )
 
-packer build --only=%builder% %template%_%spec%.json
+packer build --only=%builder% %template%.json
 if ERRORLEVEL 1 goto :EOF
 
 if exist %~dp0\test-box-%spec%.bat (
-  call %~dp0\test-box-%spec%.bat %template%_%spec%.box %template%
+  call %~dp0\test-box-%spec%.bat %boxname%_%spec%.box %template%
 ) 
