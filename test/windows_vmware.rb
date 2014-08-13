@@ -51,9 +51,17 @@ describe 'box' do
     it { should have_value('0')  }
   end
 
-  # no Windows updates service
-  describe command('& sc query "wuauserv"') do
-      it { should return_stdout(/STATE.*STOPPED/)  }
+  # no Windows Updates, just manual updates, but Windows updates service is running
+  describe service('Windows Update') do
+    it { should be_installed  }
+    it { should be_enabled  }
+    it { should be_running  }
+    it { should have_start_mode("Automatic")  }
+  end
+  describe windows_registry_key('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\AUOptions') do
+    it { should exist  }
+    it { should have_property('dword value', :type_dword)  }
+    it { should have_value('1')  }
   end
 
   # check time zone
