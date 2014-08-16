@@ -22,7 +22,9 @@
         "./answer_files/2008_r2/Autounattend.xml",
         "./scripts/microsoft-updates.bat",
         "./scripts/win-updates.ps1",
-        "./scripts/openssh.ps1"
+        "./scripts/openssh.ps1",
+        "./scripts/enable-winrm-after-customization.bat",
+        "./scripts/enable-winrm-after-customization.reg"
       ],
       "vmx_data": {
         "RemoteDisplay.vnc.enabled": "false",
@@ -79,6 +81,7 @@
       "scripts": [
         "./scripts/vm-guest-tools.bat",
         "./scripts/enable-winrm.bat",
+        "./scripts/delay-winrm-vcloud.bat",
         "./scripts/vagrant-ssh.bat",
         "./scripts/dis-updates.bat",
         "./scripts/enable-rdp.bat"
