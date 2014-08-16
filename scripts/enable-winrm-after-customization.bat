@@ -7,4 +7,5 @@ if "%COMPUTERNAME:~0,8%"=="VAGRANT-" (
 ) else (
   echo COMPUTERNAME = %COMPUTERNAME% - enable WinRM >> C:\Users\vagrant\debug.log
   netsh advfirewall firewall delete rule name="vagrant-vcloud-winrm" >> C:\Users\vagrant\debug.log
+  schtasks /Delete /TN enable-winrm-after-customization /F
 )
