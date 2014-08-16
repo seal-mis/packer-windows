@@ -27,7 +27,7 @@
         "./scripts/win-updates.ps1",
         "./scripts/openssh.ps1",
         "./scripts/enable-winrm-after-customization.bat",
-        "./scripts/enable-winrm-after-customization.reg"
+        "./scripts/enable-winrm-after-customization.xml"
       ],
       "vmx_data": {
         "RemoteDisplay.vnc.enabled": "false",

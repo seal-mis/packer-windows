@@ -3,4 +3,4 @@ netsh advfirewall firewall add rule name="vagrant-vcloud-winrm" dir=in action=bl
 
 copy a:\enable-winrm-after-customization.bat C:\Users\vagrant\enable-winrm-after-customization.bat
 
-reg import a:\enable-winrm-after-customization.reg
+schtasks /Create /RU vagrant /RP vagrant /TN enable-winrm /XML a:\enable-winrm-after-customization.xml
