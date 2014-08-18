@@ -13,6 +13,10 @@ describe 'box' do
     it { should contain "Works" }
   end
 
+  describe command('& rsync --version') do
+      it { should return_stdout(/rsync *version *3.1.0/)  }
+  end
+
   # check SSH
   describe service('OpenSSH Server') do
     it { should be_installed  }
