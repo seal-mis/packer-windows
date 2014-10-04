@@ -48,7 +48,7 @@
       ],
       "iso_checksum_type": "sha1",
       "iso_checksum": "a491f985dccfb5863f31b728dddbedb2ff4df8d1",
-      "headless": false,
+      "headless": true,
       "boot_wait": "2m",
       "ssh_username": "vagrant",
       "ssh_password": "vagrant",
