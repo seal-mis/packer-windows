@@ -7,3 +7,10 @@ reg delete "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate
 rem even harder, disable windows update service
 rem sc config wuauserv start= disabled
 rem net stop wuauserv
+
+if exist C:\Windows\Temp\win-updates.log (
+  echo Show Windows Updates log file C:\Windows\Temp\win-updates.log
+  dir C:\Windows\Temp\win-updates.log
+  type C:\Windows\Temp\win-updates.log
+  echo End of Windows Updates log file C:\Windows\Temp\win-updates.log
+)
