@@ -2,29 +2,27 @@
   "builders": [
     {
       "type": "vmware-iso",
-      "iso_urls": [
-        "http://roecloudsrv001.sealsystems.local/windows/win7sp1_enterprise_en/x64/en_windows_7_enterprise_with_sp1_x64_dvd_u_677651.iso",
-        "file:///C:/ISO/Windows 7/en_windows_7_enterprise_with_sp1_x64_dvd_u_677651.iso"
-      ],
-      "iso_checksum_type": "sha1",
-      "iso_checksum": "a491f985dccfb5863f31b728dddbedb2ff4df8d1",
+      "iso_url": "file:///Users/stefan/iso/windows7-ultimate-x64.iso",
+      "iso_checksum_type": "md5",
+      "iso_checksum": "51f51abbddab7055c8ca8bafe4ca3123",
       "headless": true,
       "boot_wait": "2m",
       "ssh_username": "vagrant",
       "ssh_password": "vagrant",
-      "ssh_wait_timeout": "6h",
-      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "ssh_wait_timeout": "4h",
+      "shutdown_command": "c:/windows/system32/sysprep/sysprep.exe /generalize /oobe /quiet /shutdown /unattend:a:/unattend.xml",
       "guest_os_type": "windows7-64",
       "tools_upload_flavor": "windows",
       "disk_size": 61440,
       "vnc_port_min": 5900,
       "vnc_port_max": 5980,
       "floppy_files": [
-        "./answer_files/7/Autounattend.xml",
+        "./answer_files/7_ultimate/Autounattend.xml",
         "./scripts/dis-updates.ps1",
         "./scripts/microsoft-updates.bat",
         "./scripts/win-updates.ps1",
-        "./scripts/openssh.ps1"
+        "./scripts/openssh.ps1",
+        "./scripts/unattend.xml"
       ],
       "vmx_data": {
         "RemoteDisplay.vnc.enabled": "false",
@@ -36,28 +34,25 @@
     },
     {
       "type": "virtualbox-iso",
-      "iso_urls": [
-        "http://roecloudsrv001.sealsystems.local/windows/win7sp1_enterprise_en/x64/en_windows_7_enterprise_with_sp1_x64_dvd_u_677651.iso",
-        "file:///C:/ISO/Windows 7/en_windows_7_enterprise_with_sp1_x64_dvd_u_677651.iso"
-      ],
-      "iso_checksum_type": "sha1",
-      "iso_checksum": "a491f985dccfb5863f31b728dddbedb2ff4df8d1",
+      "iso_url": "file:///Users/stefan/iso/windows7-ultimate-x64.iso",
+      "iso_checksum_type": "md5",
+      "iso_checksum": "51f51abbddab7055c8ca8bafe4ca3123",
       "headless": false,
       "boot_wait": "2m",
       "ssh_username": "vagrant",
       "ssh_password": "vagrant",
-      "ssh_wait_timeout": "18h",
-      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "ssh_wait_timeout": "4h",
+      "shutdown_command": "c:/windows/system32/sysprep/sysprep.exe /generalize /oobe /quiet /shutdown /unattend:a:/unattend.xml",
       "guest_os_type": "Windows7_64",
       "disk_size": 61440,
-      "hard_drive_interface": "sata",
       "floppy_files": [
-        "./answer_files/7/Autounattend.xml",
+        "./answer_files/7_ultimate/Autounattend.xml",
         "./scripts/dis-updates.ps1",
         "./scripts/microsoft-updates.bat",
         "./scripts/win-updates.ps1",
         "./scripts/openssh.ps1",
-        "./scripts/oracle-cert.cer"
+        "./scripts/oracle-cert.cer",
+        "./scripts/unattend.xml"
       ],
       "vboxmanage": [
         [
@@ -72,36 +67,18 @@
           "--cpus",
           "2"
         ],
-        [
-          "modifyvm",
-          "{{.Name}}",
-          "--vrde",
-          "on"
-        ],
-        [
-          "modifyvm",
-          "{{.Name}}",
-          "--vrdeaddress",
-          "127.0.0.1"
-        ],
-        [
-          "modifyvm",
-          "{{.Name}}",
-          "--vrdeport",
-          "13389"
-        ],
-        [
-          "modifyvm",
-          "{{.Name}}",
-          "--vcpenabled",
-          "on"
-        ],
-        [
-          "modifyvm",
-          "{{.Name}}",
-          "--vcpfile",
-          "windows_7.webm"
-        ]
+[
+  "modifyvm",
+  "{{.Name}}",
+  "--vcpenabled",
+  "on"
+],
+[
+  "modifyvm",
+  "{{.Name}}",
+  "--vcpfile",
+  "windows_7_ultimate.webm"
+]
       ]
     }
   ],
@@ -114,14 +91,14 @@
         "./scripts/vm-guest-tools.bat",
         "./scripts/vagrant-ssh.bat",
         "./scripts/dis-updates.bat",
-        "./scripts/enable-rdp.bat"
+        "./scripts/enable-rdp.bat",
+        "./scripts/enable-winrm.bat"
       ]
     },
     {
       "type": "shell",
       "inline": [
-        "rm -rf /tmp/*",
-        "exit 0"
+        "rm -rf /tmp/*"
       ]
     }
   ],
@@ -129,7 +106,7 @@
     {
       "type": "vagrant",
       "keep_input_artifact": false,
-      "output": "windows_7_{{.Provider}}.box",
+      "output": "windows_7_ultimate_{{.Provider}}.box",
       "vagrantfile_template": "vagrantfile-windows_7.template"
     }
   ]

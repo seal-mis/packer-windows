@@ -1,6 +1,7 @@
 param($global:RestartRequired=0,
         $global:MoreUpdates=0,
-        $global:MaxCycles=5)
+        $global:MaxCycles=5,
+        $MaxUpdatesPerCycle=500)
 
 $Logfile = "C:\Windows\Temp\win-updates.log"
 
@@ -26,21 +27,19 @@ function Check-ContinueRestartOrEnd() {
             Check-WindowsUpdates
 
             if (($global:MoreUpdates -eq 1) -and ($script:Cycles -le $global:MaxCycles)) {
-                Stop-Service $script:ServiceName -Force
-                Set-Service -Name $script:ServiceName -StartupType Disabled -Status Stopped
                 Install-WindowsUpdates
             } elseif ($script:Cycles -gt $global:MaxCycles) {
                 LogWrite "Exceeded Cycle Count - Stopping"
 			} else {
                 LogWrite "Done Installing Windows Updates"
-                Set-Service -Name $script:ServiceName -StartupType Automatic -Status Running
+                Invoke-Expression "a:\openssh.ps1 -AutoStart"
             }
         }
         1 {
             $prop = (Get-ItemProperty $RegistryKey).$RegistryEntry
             if (-not $prop) {
                 LogWrite "Restart Registry Entry Does Not Exist - Creating It"
-                Set-ItemProperty -Path $RegistryKey -Name $RegistryEntry -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File $($script:ScriptPath)"
+                Set-ItemProperty -Path $RegistryKey -Name $RegistryEntry -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File $($script:ScriptPath) -MaxUpdatesPerCycle $($MaxUpdatesPerCycle)"
             } else {
                 LogWrite "Restart Registry Entry Exists Already"
             }
@@ -57,9 +56,12 @@ function Check-ContinueRestartOrEnd() {
 
 function Install-WindowsUpdates() {
     $script:Cycles++
-    LogWrite 'Evaluating Available Updates:'
+    LogWrite "Evaluating Available Updates with limit of $($MaxUpdatesPerCycle):"
     $UpdatesToDownload = New-Object -ComObject 'Microsoft.Update.UpdateColl'
-    foreach ($Update in $SearchResult.Updates) {
+    $script:i = 0;
+    $CurrentUpdates = $SearchResult.Updates | Select-Object
+    while($script:i -lt $CurrentUpdates.Count -and $script:CycleUpdateCount -lt $MaxUpdatesPerCycle) {
+        $Update = $CurrentUpdates[$script:i]
         if (($Update -ne $null) -and (!$Update.IsDownloaded)) {
             [bool]$addThisUpdate = $false
             if ($Update.InstallationBehavior.CanRequestUserInput) {
@@ -69,8 +71,10 @@ function Install-WindowsUpdates() {
                     LogWrite "> Note: $($Update.Title) has a license agreement that must be accepted. Accepting the license."
                     $Update.AcceptEula()
                     [bool]$addThisUpdate = $true
+                    $script:CycleUpdateCount++
                 } else {
                     [bool]$addThisUpdate = $true
+                    $script:CycleUpdateCount++
                 }
             }
 
@@ -79,15 +83,27 @@ function Install-WindowsUpdates() {
                 $UpdatesToDownload.Add($Update) |Out-Null
             }
 		}
+        $script:i++
     }
 
     if ($UpdatesToDownload.Count -eq 0) {
         LogWrite "No Updates To Download..."
     } else {
         LogWrite 'Downloading Updates...'
-        $Downloader = $UpdateSession.CreateUpdateDownloader()
-        $Downloader.Updates = $UpdatesToDownload
-        $Downloader.Download()
+        $ok = 0;
+        while (! $ok) {
+            try {
+                $Downloader = $UpdateSession.CreateUpdateDownloader()
+                $Downloader.Updates = $UpdatesToDownload
+                $Downloader.Download()
+                $ok = 1;
+            } catch {
+                LogWrite $_.Exception | Format-List -force
+                LogWrite "Error downloading updates. Retrying in 30s."
+                $script:attempts = $script:attempts + 1
+                Start-Sleep -s 30
+            }
+        }
     }
 
     $UpdatesToInstall = New-Object -ComObject 'Microsoft.Update.UpdateColl'
@@ -108,7 +124,7 @@ function Install-WindowsUpdates() {
         LogWrite 'No updates available to install...'
         $global:MoreUpdates=0
         $global:RestartRequired=0
-        Set-Service -Name $script:ServiceName -StartupType Automatic -Status Running
+        Invoke-Expression "a:\openssh.ps1 -AutoStart"
         break
     }
 
@@ -146,17 +162,41 @@ function Check-WindowsUpdates() {
     LogWrite "Checking For Windows Updates"
     $Username = $env:USERDOMAIN + "\" + $env:USERNAME
 
-    New-EventLogWrite -Source $ScriptName -LogName 'Windows Powershell' -ErrorAction SilentlyContinue
+    New-EventLog -Source $ScriptName -LogName 'Windows Powershell' -ErrorAction SilentlyContinue
 
     $Message = "Script: " + $ScriptPath + "`nScript User: " + $Username + "`nStarted: " + (Get-Date).toString()
 
+    Write-EventLog -LogName 'Windows Powershell' -Source $ScriptName -EventID "104" -EntryType "Information" -Message $Message
     LogWrite $Message
 
     $script:UpdateSearcher = $script:UpdateSession.CreateUpdateSearcher()
-    $script:SearchResult = $script:UpdateSearcher.Search("IsInstalled=0 and Type='Software' and IsHidden=0")
+    $script:successful = $FALSE
+    $script:attempts = 0
+    $script:maxAttempts = 12
+    while(-not $script:successful -and $script:attempts -lt $script:maxAttempts) {
+        try {
+            $script:SearchResult = $script:UpdateSearcher.Search("IsInstalled=0 and Type='Software' and IsHidden=0")
+            $script:successful = $TRUE
+        } catch {
+            LogWrite $_.Exception | Format-List -force
+            LogWrite "Search call to UpdateSearcher was unsuccessful. Retrying in 10s."
+            $script:attempts = $script:attempts + 1
+            Start-Sleep -s 10
+        }
+    }
+
     if ($SearchResult.Updates.Count -ne 0) {
-        $script:SearchResult.Updates |Select-Object -Property Title, Description, SupportUrl, UninstallationNotes, RebootRequired, EulaAccepted |Format-List
-        $global:MoreUpdates=1
+        $Message = "There are " + $SearchResult.Updates.Count + " more updates."
+        LogWrite $Message
+        try {
+            $script:SearchResult.Updates |Select-Object -Property Title, Description, SupportUrl, UninstallationNotes, RebootRequired, EulaAccepted |Format-List
+            $global:MoreUpdates=1
+        } catch {
+            LogWrite $_.Exception | Format-List -force
+            LogWrite "Showing SearchResult was unsuccessful. Aborting."
+            $global:RestartRequired=0
+            $global:MoreUpdates=0
+        }
     } else {
         LogWrite 'There are no applicable updates'
         $global:RestartRequired=0
@@ -171,11 +211,7 @@ $script:UpdateSession.ClientApplicationID = 'Packer Windows Update Installer'
 $script:UpdateSearcher = $script:UpdateSession.CreateUpdateSearcher()
 $script:SearchResult = New-Object -ComObject 'Microsoft.Update.UpdateColl'
 $script:Cycles = 0
-
-$script:ServiceName = "OpenSSHd"
-
-Stop-Service $script:ServiceName -Force
-Set-Service -Name $script:ServiceName -StartupType Disabled -Status Stopped
+$script:CycleUpdateCount = 0
 
 Check-WindowsUpdates
 if ($global:MoreUpdates -eq 1) {
