@@ -196,7 +196,8 @@ function Check-WindowsUpdates() {
             LogWrite "Showing SearchResult was unsuccessful. Rebooting."
             $global:RestartRequired=1
             $global:MoreUpdates=0
-            LogWrite "Restart Required - Restarting..."
+            Check-ContinueRestartOrEnd
+            LogWrite "Show never happen to see this text!"
             Restart-Computer
         }
     } else {
