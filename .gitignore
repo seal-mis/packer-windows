@@ -12,3 +12,5 @@
 *.log
 *~
 /output/
+tmp/
+*.webm
