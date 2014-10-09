@@ -94,7 +94,7 @@
           "modifyvm",
           "{{.Name}}",
           "--vcpenabled",
-          "on"
+          "off"
         ],
         [
           "modifyvm",
