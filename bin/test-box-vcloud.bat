@@ -26,9 +26,9 @@ if exist C:\vagrant\resources\Vagrantfile-global (
 :have_vagrantfile
 
 rem tested only with box-provider=vcloud
-vagrant plugin install vagrant-%box_provider%
+rem vagrant plugin install vagrant-%box_provider%
 
-vagrant plugin install vagrant-serverspec
+rem vagrant plugin install vagrant-serverspec
 
 vagrant box remove %box_name% --provider=%vagrant_provider%
 vagrant box add %box_name% %box_path%

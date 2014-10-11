@@ -21,8 +21,8 @@ if exist %tmp_path% rmdir /s /q %tmp_path%
 
 if %quick%==1 goto :do_test
 
-vagrant plugin install vagrant-serverspec
-vagrant plugin install %vagrant_plugin%
+rem vagrant plugin install vagrant-serverspec
+rem vagrant plugin install %vagrant_plugin%
 if exist c:\vagrant\resources\license.lic (
   if not exist %VAGRANT_HOME%\license-%vagrant_plugin%.lic (
     vagrant plugin license %vagrant_plugin% c:\vagrant\resources\license.lic

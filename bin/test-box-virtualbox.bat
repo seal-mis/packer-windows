@@ -18,7 +18,7 @@ if exist %tmp_path% rmdir /s /q %tmp_path%
 
 if %quick%==1 goto :do_test
 
-vagrant plugin install vagrant-serverspec
+rem vagrant plugin install vagrant-serverspec
 
 vagrant box remove %box_name% --provider=%vagrant_provider%
 vagrant box add %box_name% %box_path%
