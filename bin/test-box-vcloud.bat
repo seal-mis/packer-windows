@@ -1,10 +1,15 @@
 rem 
 rem bin\test-box-vcloud.bat ubuntu1204_vcloud.box ubuntu1204
 set quick=0
+set debug=0
 
 if "%1x"=="--quickx" (
   shift
   set quick=1
+)
+if "%1x"=="--debugx" (
+  shift
+  set debug=1
 )
 set box_path=%1
 set box_name=%2
@@ -68,7 +73,7 @@ set result=0
 mkdir %tmp_path%
 pushd %tmp_path%
 call :create_vagrantfile
-set VAGRANT_LOG=debug
+if %debug%==1 set VAGRANT_LOG=debug
 echo USERPROFILE = %USERPROFILE%
 if exist %USERPROFILE%\.ssh\known_hosts type %USERPROFILE%\.ssh\known_hosts
 del /F %USERPROFILE%\.ssh\known_hosts
@@ -76,7 +81,7 @@ if exist %USERPROFILE%\.ssh\known_hosts echo known_hosts still here!!
 vagrant up --provider=%vagrant_provider%
 if ERRORLEVEL 1 set result=%ERRORLEVEL%
 
-set VAGRANT_LOG=debug
+if %debug%==1 set VAGRANT_LOG=debug
 @echo Sleep 10 seconds
 @ping 1.1.1.1 -n 1 -w 10000 > nul
 
@@ -86,7 +91,7 @@ popd
 
 if %quick%==1 goto :done
 
-set VAGRANT_LOG=warn
+if %debug%==1 set VAGRANT_LOG=debug
 vagrant box remove %box_name% --provider=%vagrant_provider%
 if ERRORLEVEL 1 set result=%ERRORLEVEL%
 
