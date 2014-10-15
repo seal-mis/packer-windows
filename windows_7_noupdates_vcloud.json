@@ -107,7 +107,7 @@
     {
       "type": "vagrant-vmware-ovf",
       "provider": "vcloud",
-      "output": "windows_7_{{.Provider}}.box",
+      "output": "windows_7_noupdates_{{.Provider}}.box",
       "vagrantfile_template": "vagrantfile-windows_7.template"
     }
   ]
