@@ -1,0 +1,136 @@
+{
+  "builders": [
+    {
+      "type": "vmware-iso",
+      "iso_urls": [
+        "http://roecloudsrv001.sealsystems.local/windows/win7sp1_enterprise_en/x64/en_windows_7_enterprise_with_sp1_x64_dvd_u_677651.iso",
+        "file:///C:/ISO/Windows 7/en_windows_7_enterprise_with_sp1_x64_dvd_u_677651.iso"
+      ],
+      "iso_checksum_type": "sha1",
+      "iso_checksum": "a491f985dccfb5863f31b728dddbedb2ff4df8d1",
+      "headless": true,
+      "boot_wait": "2m",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_wait_timeout": "6h",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "guest_os_type": "windows7-64",
+      "tools_upload_flavor": "windows",
+      "disk_size": 61440,
+      "vnc_port_min": 5900,
+      "vnc_port_max": 5980,
+      "floppy_files": [
+        "./answer_files/7_noupdates/Autounattend.xml",
+        "./scripts/dis-updates.ps1",
+        "./scripts/microsoft-updates.bat",
+        "./scripts/win-updates.ps1",
+        "./scripts/openssh.ps1"
+      ],
+      "vmx_data": {
+        "RemoteDisplay.vnc.enabled": "false",
+        "RemoteDisplay.vnc.port": "5900",
+        "memsize": "2048",
+        "numvcpus": "2",
+        "scsi0.virtualDev": "lsisas1068"
+      }
+    },
+    {
+      "type": "virtualbox-iso",
+      "iso_urls": [
+        "http://roecloudsrv001.sealsystems.local/windows/win7sp1_enterprise_en/x64/en_windows_7_enterprise_with_sp1_x64_dvd_u_677651.iso",
+        "file:///C:/ISO/Windows 7/en_windows_7_enterprise_with_sp1_x64_dvd_u_677651.iso"
+      ],
+      "iso_checksum_type": "sha1",
+      "iso_checksum": "a491f985dccfb5863f31b728dddbedb2ff4df8d1",
+      "headless": false,
+      "boot_wait": "2m",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_wait_timeout": "18h",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "guest_os_type": "Windows7_64",
+      "disk_size": 61440,
+      "hard_drive_interface": "sata",
+      "floppy_files": [
+        "./answer_files/7_noupdates/Autounattend.xml",
+        "./scripts/dis-updates.ps1",
+        "./scripts/microsoft-updates.bat",
+        "./scripts/win-updates.ps1",
+        "./scripts/openssh.ps1",
+        "./scripts/oracle-cert.cer"
+      ],
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "2048"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "2"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vrde",
+          "on"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vrdeaddress",
+          "127.0.0.1"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vrdeport",
+          "13389"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vcpenabled",
+          "off"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vcpfile",
+          "windows_7_noupdates.webm"
+        ]
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "remote_path": "/tmp/script.bat",
+      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "scripts": [
+        "./scripts/vm-guest-tools.bat",
+        "./scripts/vagrant-ssh.bat",
+        "./scripts/dis-updates.bat",
+        "./scripts/enable-rdp.bat"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "rm -rf /tmp/*",
+        "exit 0"
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": false,
+      "output": "windows_7_noupdates_{{.Provider}}.box",
+      "vagrantfile_template": "vagrantfile-windows_7.template"
+    }
+  ]
+}
