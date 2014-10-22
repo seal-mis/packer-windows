@@ -114,7 +114,8 @@
         "./scripts/vm-guest-tools.bat",
         "./scripts/vagrant-ssh.bat",
         "./scripts/dis-updates.bat",
-        "./scripts/enable-rdp.bat"
+        "./scripts/enable-rdp.bat",
+        "./scripts/enable-winrm.bat"
       ]
     },
     {
