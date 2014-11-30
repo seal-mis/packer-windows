@@ -12,7 +12,33 @@ function LogWrite {
    Write-Host $logstring
 }
 
+function Check-AutoLogon() {
+    $RegistryKey = "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\winlogon"
+    $RegistryEntry = "AutoAdminLogon"
+    LogWrite "Check-AutoLogon"
+    $prop = (Get-ItemProperty $RegistryKey).$RegistryEntry
+    if ($prop) {
+        LogWrite "$($RegistryEntry) = $($prop)"
+    }
+    Set-ItemProperty -Path $RegistryKey -Name $RegistryEntry -Value "1"
+
+    $RegistryEntry = "DefaultUserName"
+    $prop = (Get-ItemProperty $RegistryKey).$RegistryEntry
+    if ($prop) {
+        LogWrite "$($RegistryEntry) = $($prop)"
+    }
+    Set-ItemProperty -Path $RegistryKey -Name $RegistryEntry -Value "vagrant"
+
+    $RegistryEntry = "DefaultPassword"
+    $prop = (Get-ItemProperty $RegistryKey).$RegistryEntry
+    if ($prop) {
+        LogWrite "$($RegistryEntry) = $($prop)"
+    }
+    Set-ItemProperty -Path $RegistryKey -Name $RegistryEntry -Value "vagrant"
+}
+
 function Check-ContinueRestartOrEnd() {
+    Check-AutoLogon
     $RegistryKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
     $RegistryEntry = "InstallWindowsUpdates"
     switch ($global:RestartRequired) {
