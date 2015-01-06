@@ -1,5 +1,3 @@
-require_relative 'spec_helper'
-
 describe 'box' do
   describe 'windows box' do
     it 'should have a vagrant user' do
@@ -10,11 +8,11 @@ describe 'box' do
   # this tests if rsync works from bin/test-box-vcloud.bat
   describe file('c:/vagrant/testdir/testfile.txt') do
     it { should be_file }
-    it { should contain "Works" }
+    its(:content) { should match /Works/ }
   end
 
   describe command('& rsync --version') do
-      it { should return_stdout(/rsync *version *3.1.0/)  }
+      its(:stdout) { should match /rsync *version *3.1.0/ }
   end
 
   # check SSH
@@ -57,7 +55,7 @@ describe 'box' do
 
   # check for 10 GBit vmxnet3 network adapter
   describe command('& "ipconfig" /all') do
-      it { should return_stdout(/Description(\.| )*: vmxnet3/)  }
+      its(:stdout) { should match /Description(\.| )*: vmxnet3/ }
   end
 
   # no Windows Updates, just manual updates, but Windows updates service is running
@@ -75,7 +73,7 @@ describe 'box' do
 
   # check time zone
   describe command('& tzutil /g') do
-      it { should return_stdout(/W. Europe Standard Time/)  }
+      its(:stdout) { should match /W. Europe Standard Time/ }
   end
 
 end
