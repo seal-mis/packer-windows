@@ -7,7 +7,6 @@ describe 'box' do
 
   # this tests if rsync (or at least the shared folder) works from bin/test-box-vcloud.bat
   describe file('c:/vagrant/testdir/testfile.txt') do
-    it { should be_file }
     its(:content) { should match /Works/ }
   end
 
@@ -38,15 +37,11 @@ describe 'box' do
   describe port(3389) do
     it { should be_listening  }
   end
-  describe windows_registry_key('HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Terminal Server\fDenyTSConnections') do
-    it { should exist  }
-    it { should have_property('dword value', :type_dword)  }
-    it { should have_value('0')  }
+  describe windows_registry_key('HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Terminal Server') do
+    it { should have_property_value('fDenyTSConnections', :type_dword, '0') }
   end
-  describe windows_registry_key('HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp\UserAuthentication') do
-    it { should exist  }
-    it { should have_property('dword value', :type_dword)  }
-    it { should have_value('0')  }
+  describe windows_registry_key('HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp') do
+    it { should have_property_value('UserAuthentication', :type_dword, '0') }
   end
 
   # no Windows Updates, just manual updates, but Windows updates service is running
@@ -54,12 +49,10 @@ describe 'box' do
     it { should be_installed  }
     it { should be_enabled  }
     it { should be_running  }
-    it { should have_start_mode("Automatic")  }
+    it { should have_start_mode("Automatic Delayed")  }
   end
-  describe windows_registry_key('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\AUOptions') do
-    it { should exist  }
-    it { should have_property('dword value', :type_dword)  }
-    it { should have_value('1')  }
+  describe windows_registry_key('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update') do
+    it { should have_property_value('AUOptions', :type_dword, '1') }
   end
 
   # check time zone

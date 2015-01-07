@@ -72,6 +72,9 @@ echo     end >>Vagrantfile
 echo   end >>Vagrantfile
 echo end >>Vagrantfile
 
+echo --color >.rspec
+echo --format documentation >>.rspec
+
 exit /b
 
 :done
