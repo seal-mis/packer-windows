@@ -56,9 +56,7 @@ describe 'box' do
   # no Windows Updates, just manual updates, but Windows updates service is running
   describe service('Windows Update') do
     it { should be_installed  }
-    it { should be_enabled  }
     it { should be_running  }
-    it { should have_start_mode("Automatic Delayed")  }
   end
   describe windows_registry_key('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update') do
     it { should have_property_value('AUOptions', :type_dword, '1') }
