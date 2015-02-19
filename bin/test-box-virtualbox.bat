@@ -75,4 +75,4 @@ echo end >>Vagrantfile
 exit /b
 
 :done
-exit %result%
+exit /b %result%
