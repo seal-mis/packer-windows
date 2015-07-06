@@ -25,13 +25,13 @@ set box_provider=vcloud
 
 set result=0
 
-vagrant box remove %boxname% --provider=%box_provider%
+vagrant box remove %boxname% --provider=%box_provider% --force
 if exist %box_filename% (
   echo "Use %box_filename% from current dir"
-  vagrant box add %boxname% %box_filename%
+  vagrant box add %boxname% %box_filename% --force
 ) else (
   echo "Use %box_filename% from other jenkins workspace dir"
-  vagrant box add %boxname% c:\jenkins\workspace\%boxname%_%box_provider%\%box_filename%
+  vagrant box add %boxname% c:\jenkins\workspace\%boxname%_%box_provider%\%box_filename% --force
 )
 if ERRORLEVEL 1 set result=%ERRORLEVEL%
 if ERRORLEVEL 1 goto :done
@@ -48,6 +48,8 @@ if "%VAGRANT_HOME%x"=="x" set VAGRANT_HOME=%USERPROFILE%\.vagrant.d
 @set vcloud_vdc=YOUR-GLOBAL-VDC
 
 if exist c:\vagrant\resources\upload-vcloud-credentials.bat call c:\vagrant\resources\upload-vcloud-credentials.bat
+
+set PATH=%PATH%;c:\Program Files (x86)\VMware\Client Integration Plug-in 5.5\ovftool\;c:\Program Files (x86)\VMware\VMware Workstation\ovftool
 
 echo Uploading %boxname%.ovf to vCloud %vcloud_hostname% / %vcloud_org% / %vcloud_catalog% / %boxname%
 @ovftool --acceptAllEulas --vCloudTemplate --overwrite %VAGRANT_HOME%\boxes\%boxname%\0\%box_provider%\%boxname%.ovf "vcloud://%vcloud_username%:%vcloud_password%@%vcloud_hostname%:443?org=%vcloud_org%&vappTemplate=%boxname%&catalog=%vcloud_catalog%&vdc=%vcloud_vdc%"
@@ -67,4 +69,4 @@ set result=%ERRORLEVEL%
 goto :done
 
 :done
-exit %result%
+exit /b %result%
