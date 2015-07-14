@@ -116,7 +116,7 @@ function Install-WindowsUpdates() {
     if ($UpdatesToDownload.Count -eq 0) {
         LogWrite "No Updates To Download..."
     } else {
-        LogWrite 'Downloading Updates...'
+        LogWrite "Downloading $($UpdatesToDownload.Count) Updates..."
         $ok = 0;
         while (! $ok) {
             try {
@@ -160,7 +160,7 @@ function Install-WindowsUpdates() {
         $global:RestartRequired=1
     }
 
-    LogWrite 'Installing updates...'
+    LogWrite "Installing $($UpdatesToInstall.Count) updates..."
 
     $Installer = $script:UpdateSession.CreateUpdateInstaller()
     $Installer.Updates = $UpdatesToInstall
